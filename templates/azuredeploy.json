@@ -14,8 +14,9 @@
         "storageAccountName": "[replace(variables('functionName'),'-', '')]",
         "keyVaultName": "[variables('functionName')]",
         "storageContainerName": "logs",
-        "keyVaultSecretReader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '4633458b-17de-408a-b874-0445c86b69e6')]",
-        "uniqueRoleGuidKeyVaultSecretReader": "[guid(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')))]"
+        "storageSuffix": "[environment().suffixes.storage]",
+        "keyVaultSecretOfficer": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7')]",
+        "uniqueRoleGuidkeyVaultSecretOfficer": "[guid(resourceId('Microsoft.KeyVault/vaults', variables('keyVaultName')))]"
     },
     "resources": [
         {
@@ -53,14 +54,14 @@
         {
             "type": "Microsoft.Authorization/roleAssignments",
             "apiVersion": "2020-04-01-preview",
-            "name": "[variables('uniqueRoleGuidKeyVaultSecretReader')]",
+            "name": "[variables('uniqueRoleGuidkeyVaultSecretOfficer')]",
             "scope": "[concat('Microsoft.KeyVault/vaults', '/', variables('functionName'))]",
             "dependsOn": [
                 "[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
                 "[resourceId('Microsoft.Web/sites/', variables('functionName'))]"
             ],
             "properties": {
-                "roleDefinitionId": "[variables('keyVaultSecretReader')]",
+                "roleDefinitionId": "[variables('keyVaultSecretOfficer')]",
                 "principalId": "[reference(resourceId('Microsoft.Web/sites', variables('functionName')), '2019-08-01', 'full').identity.principalId]"
             }
         },
@@ -113,13 +114,13 @@
                     "dependsOn": [
                         "[concat('Microsoft.Web/sites/', variables('functionName'))]",
                         "[resourceId('Microsoft.KeyVault/vaults/', variables('keyVaultName'))]",
-                        "[variables('uniqueRoleGuidKeyVaultSecretReader')]"
+                        "[variables('uniqueRoleGuidkeyVaultSecretOfficer')]"
                     ],
                     "properties": {
                         "APPINSIGHTS_INSTRUMENTATIONKEY": "[reference(resourceId('Microsoft.insights/components', variables('functionName')), '2015-05-01').InstrumentationKey]",
                         "APPLICATIONINSIGHTS_CONNECTION_STRING": "[reference(resourceId('Microsoft.insights/components', variables('functionName')), '2015-05-01').ConnectionString]",
-                        "AzureWebJobsStorage": "[[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
-                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
+                        "AzureWebJobsStorage": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
+                        "WEBSITE_CONTENTAZUREFILECONNECTIONSTRING": "[concat('DefaultEndpointsProtocol=https;AccountName=', toLower(variables('storageAccountName')),';AccountKey=', listKeys(resourceId('Microsoft.Storage/storageAccounts', variables('storageAccountName')), '2019-06-01').keys[0].value, ';EndpointSuffix=',toLower(variables('storageSuffix')))]",
                         "WEBSITE_CONTENTSHARE": "[toLower(variables('functionName'))]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "powershell"
