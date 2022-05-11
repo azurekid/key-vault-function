@@ -17,10 +17,9 @@ if (-not([string]::IsNullOrWhiteSpace($processId))) {
 
     try {
         $KeyVaultName = "$env:keyVaultName"
-        $offSet = $processId -replace "[a-zA-Z -]"
+        #$offSet = $processId -replace "[a-zA-Z -]"
 
         $prefix = Get-Prefix -processId $processId -value $payload.a
-        Write-Output "Prefix Value: [$($prefix)]"
 
         Write-Output "Setting Application ID"
         Set-AzKeyVaultSecret `

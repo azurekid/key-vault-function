@@ -124,6 +124,7 @@
                         "WEBSITE_CONTENTSHARE": "[toLower(variables('functionName'))]",
                         "FUNCTIONS_EXTENSION_VERSION": "~3",
                         "FUNCTIONS_WORKER_RUNTIME": "powershell",
+                        "keyVaultName": "[variables('keyVaultName')]",
                         "WEBSITE_RUN_FROM_PACKAGE": "https://github.com/azurekid/key-vault-function/raw/main/function.zip"
                     }
                 }
